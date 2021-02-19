@@ -1,4 +1,4 @@
-module BiliBili_Danmaku_Go
+module github.com/daofeng2015/BiliBili_Danmaku_Go
 
 go 1.15
 
