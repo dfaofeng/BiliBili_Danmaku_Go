@@ -1,4 +1,4 @@
-module test2
+module BiliBili_Danmaku_Go
 
 go 1.15
 
