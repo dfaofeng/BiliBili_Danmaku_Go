@@ -52,18 +52,19 @@ type DanmuInfo struct {
 	} `json:"data"`
 }
 
-func initRoom(room int)  {
+//主函数
+func InitRoom(room int) chan []byte {
 	//短号转换
 	roominfo, err := getRoom(room)
 	if err != nil {
-		return
+		return nil
 	}
 	//获取真实房间号
 	roomId := strconv.Itoa(roominfo.Data.RoomID)
 	//获取弹幕服务器地址
 	danmakuInfo,err :=apiDanmuInfoRequest(roomId)
 	//ws服务器连接,处理
-	websocketConnection( roomId, danmakuInfo)
+	return websocketConnection( roomId, danmakuInfo)
 }
 //json序列化
 func jsonInfoDecode(body []byte, v interface{}) {
