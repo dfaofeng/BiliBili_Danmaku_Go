@@ -2,9 +2,7 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/gorilla/websocket"
-	"github.com/tidwall/gjson"
 	"log"
 	"net/http"
 	"time"
@@ -91,8 +89,10 @@ func setupWebsocketConnection(roomID string, danmakuInfo DanmuInfo) ([]string, [
 	authPackage, heartBeatPackage := authAndHeartBeatPackageGen(authBody)
 	return hostURL, authPackage, heartBeatPackage
 }
+
+
 //ws连接初始化
-func websocketConnection(roomID string, danmakuInfo DanmuInfo) {
+func websocketConnection(roomID string, danmakuInfo DanmuInfo) chan []byte {
 	restart := func(roomID string) {
 		if err := recover(); err != nil {
 			log.Println("[INFO] 正在尝试重连")
@@ -151,16 +151,9 @@ func websocketConnection(roomID string, danmakuInfo DanmuInfo) {
 		select {
 		case <-ticker.C:
 			keepHeartBeat(wsClient, heartBeatPackage)
-		case danmaku := <-danmakuChannel:
-			GetCmd(danmaku)
+		case <-danmakuChannel:
+			return danmakuChannel
+			//GetCmd(danmaku)
 		}
-	}
-}
-//处理弹幕流
-func GetCmd(Gjson []byte)  {
-	lastJson :=gjson.ParseBytes(Gjson)
-	switch lastJson.Get("cmd").String() {
-	case "DANMU_MSG":
-		fmt.Println(lastJson.Get("info.1").String())
 	}
 }
